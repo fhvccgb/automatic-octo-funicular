@@ -722,7 +722,30 @@ def rubrics():
         current_user=get_current_user(),
         site_content=data['site_content']
     )
+@app.route('/my_rubrics')
+def my_rubrics():
+    if not requires_login():
+        flash('Login required to view your rubrics.', 'error')
+        return redirect(url_for('login'))
 
+    data = load_data()
+    user = get_current_user()
+    if not user:
+        flash("User not found!", "error")
+        return redirect(url_for("login"))
+
+    my_rubrics = {
+        rid: rubric for rid, rubric in data.get('rubrics', {}).items()
+        if rubric.get('created_by') == user['username']
+    }
+
+    return render_template('my_rubrics.html',
+        rubrics=my_rubrics,
+        is_admin=requires_admin(),
+        is_logged_in=True,
+        current_user=user,
+        site_content=data.get('site_content', {})
+    )
 
 if __name__ == '__main__':
     data = load_data()
