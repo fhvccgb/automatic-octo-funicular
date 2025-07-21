@@ -481,7 +481,14 @@ def record_match():
             loser = request.form['loser']
             if winner == loser:
                 flash('A player cannot compete against themselves!', 'error')
-                return render_template('record_match.html', data=data)
+                return render_template('record_match.html',
+                    data=data,
+                    teams=data['teams'],  # ✅ Add this
+                    players=data['players'],  # Optional, if also used in template
+                    is_admin=requires_admin(),
+                    is_logged_in=requires_login(),
+                    current_user=get_current_user()
+                )
             winner_old_elo = data['players'][winner]['elo']
             loser_old_elo = data['players'][loser]['elo']
             new_winner_elo, new_loser_elo = update_elo_ratings(winner_old_elo, loser_old_elo)
