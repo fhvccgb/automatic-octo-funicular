@@ -481,7 +481,8 @@ def record_match():
             loser = request.form['loser']
             if winner == loser:
                 flash('A player cannot compete against themselves!', 'error')
-                return render_template('record_match.html',
+                return render_template(
+                    'record_match.html',
                     data=data,
                     teams=data['teams'],  # ✅ Add this
                     players=data['players'],  # Optional, if also used in template
@@ -512,7 +513,16 @@ def record_match():
             losing_team = request.form['losing_team']
             if winning_team == losing_team:
                 flash('A team cannot compete against itself!', 'error')
-                return render_template('record_match.html', data=data)
+                return render_template(
+                    'record_match.html',
+                    data=data,
+                    teams=data.get('teams', {}),
+                    players=data.get('players', {}),
+                    is_admin=requires_admin(),
+                    is_logged_in=requires_login(),
+                    current_user=get_current_user(),
+                    site_content=data.get('site_content', {})
+                )
             winner_old_elo = data['teams'][winning_team]['elo']
             loser_old_elo = data['teams'][losing_team]['elo']
             new_winner_elo, new_loser_elo = update_elo_ratings(winner_old_elo, loser_old_elo)
@@ -541,7 +551,16 @@ def record_match():
         save_data(data)
         flash('Match recorded successfully!', 'success')
         return redirect(url_for('index'))
-    return render_template('record_match.html', data=data)
+    return render_template(
+        'record_match.html',
+        data=data,
+        teams=data.get('teams', {}),
+        players=data.get('players', {}),
+        is_admin=requires_admin(),
+        is_logged_in=requires_login(),
+        current_user=get_current_user(),
+        site_content=data.get('site_content', {})
+    )
 
 @app.route('/stories', methods=['GET', 'HEAD'])
 def stories():
