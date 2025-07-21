@@ -641,7 +641,7 @@ def edit_website():
         save_data(data)
         flash('Website content updated!', 'success')
         return redirect(url_for('edit_website'))
-    return render_template('edit_website.html', data=data)
+    return render_template('edit_website.html', data=data, site_content=data.get('site_content', {}))
 
 @app.route('/forum', methods=['GET'])
 def forum():
